@@ -1,12 +1,25 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright (C) 2011 Parttimenerd
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package application;
 
-import filesystem.Directory;
-import filesystem.FileSystem;
-import filesystem.MainFile;
+package ljbos.application;
+
+import ljbos.filesystem.Directory;
+import ljbos.filesystem.FileSystem;
+import ljbos.filesystem.MainFile;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -15,7 +28,7 @@ import java.io.InputStreamReader;
 
 /**
  *
- * @author Johannes
+ * @author Parttimenerd
  */
 public class ConsoleMain {
 
@@ -23,6 +36,8 @@ public class ConsoleMain {
 
     /**
      * @param args the command line arguments
+     * @throws FileNotFoundException
+     * @throws IOException  
      */
     public static void main(String[] args) throws FileNotFoundException, IOException {
         FileSystem.config(new File("D:/test.txt"));
@@ -30,7 +45,7 @@ public class ConsoleMain {
         BufferedReader buf = new BufferedReader(new InputStreamReader(System.in));
         System.out.print(actual.getPath() + ">");
         String str = buf.readLine();
-        while (str != "exit") {
+        while (!"exit".equals(str)) {
             executeString(str);
             System.out.print(actual.getPath() + ">");
             str = buf.readLine();
@@ -62,9 +77,9 @@ public class ConsoleMain {
                 }
             } else if ("mkdir".equals(com)){
                 if (arg.indexOf(".") != -1){
-                    new filesystem.File(arg, actual, FileSystem.USER_OWNER);
+                    new ljbos.filesystem.File(arg, actual, FileSystem.USER_OWNER);
                 } else {
-                    new filesystem.Directory(arg, actual, FileSystem.USER_OWNER);
+                    new ljbos.filesystem.Directory(arg, actual, FileSystem.USER_OWNER);
                 }
             }
         }
