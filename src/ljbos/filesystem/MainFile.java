@@ -132,9 +132,25 @@ public abstract class MainFile {
         return parent == null;
     }
     
-    public abstract void clear();
+    public abstract void delete();
     
     public abstract boolean isDirectory();
     
     public abstract MainFile getFile(String filename);
+    
+    public boolean addFile(MainFile file){
+        return false;
+    }
+    
+    public ArrayList<MainFile> getFileList(){
+        return null;
+    }
+    
+    public void setData(byte[] data){
+        //not used...
+    }
+
+    public ArrayList<Cluster> getClusters() {
+        return null;
+    }
 }

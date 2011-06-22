@@ -17,6 +17,8 @@
 
 package ljbos.filesystem;
 
+import java.io.IOException;
+
 /**
  *
  * @author Parttimenerd
@@ -24,23 +26,31 @@ package ljbos.filesystem;
 public class Cluster {
     
     private Cluster nextCluster;
-    private int cluster;
+    private int offset;
     private int length;
-    private int pos = 0;
     private File file;
+    private byte[] data;
     
-    public Cluster(int cluster, int length, File file, Cluster previousCluster){
-        this.cluster = cluster;
+    public Cluster(int offset, int length, File file){
+        this.offset = offset;
         this.length = length;
+        data = new byte[length];
         this.file = file;
+    }
+    
+    public Cluster(int offset, int length, File file, Cluster previousCluster){
+        this(offset, length, file);
         if (previousCluster != null){
             previousCluster.setNextCluster(this);
         }
-        FileSystem.addCluster(this);
     }
     
-    public void resetPos(){
-        pos = 0;
+    public void read() throws IOException{
+        FileSystem.getSource().read(data, offset, length);
+    }
+    
+    public void write() throws IOException{
+        FileSystem.getSource().write(data, offset, length);
     }
     
     /**
@@ -57,18 +67,15 @@ public class Cluster {
         this.nextCluster = nextCluster;
     }
 
-    /**
-     * @return the cluster
-     */
-    public int getCluster() {
-        return cluster;
+    public int getOffset() {
+        return offset;
     }
 
     /**
      * @param cluster the cluster to set
      */
-    public void setCluster(int cluster) {
-        this.cluster = cluster;
+    public void setOffset(int offset) {
+        this.offset = offset;
     }
 
     /**
@@ -86,28 +93,21 @@ public class Cluster {
     }
 
     /**
-     * @return the pos
-     */
-    public int getPos() {
-        return pos;
-    }
-
-    public void inkrementPos(int i){
-        pos += i;
-    }
-    
-    /**
-     * @param pos the pos to set
-     */
-    public void setPos(int pos) {
-        this.pos = pos;
-    }
-
-    /**
      * @return the file
      */
     public File getFile() {
         return file;
     }
+ 
+    public int size(){
+        return length;
+    }
+
+    public void setData(byte[] data){
+        this.data = data;
+    }
     
+    public byte[] getData() {
+        return data;
+    }
 }

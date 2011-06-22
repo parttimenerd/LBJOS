@@ -17,7 +17,6 @@
 
 package ljbos.filesystem;
 
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -30,15 +29,15 @@ public class InputStream extends java.io.InputStream {
     
     private ArrayList<Cluster> clusters;
     private Cluster actual;
-    private FileInputStream stream;
+    private int pos = 0;
+    private byte[] data;
     
     public InputStream(String name) throws FileNotFoundException {
         MainFile file = FileSystem.getRoot().getFile(name);
         if (name == null || file == null || file.isDirectory()){
             throw new FileNotFoundException();
         }
-        clusters = ((File)file).getClusters();
-        stream = FileSystem.getInputStream();
+        clusters = file.getClusters();
         actual = clusters.isEmpty() ? null : clusters.get(0);
     }
 
@@ -49,48 +48,66 @@ public class InputStream extends java.io.InputStream {
         }
         clusters = file.getClusters();
         actual = clusters.isEmpty() ? null : clusters.get(0);
-        stream = FileSystem.getInputStream();
     }
     
+    @Override
     public int read() throws IOException {
-        if (actual == null){
+        if (actual == null || data == null || data.length < 1){
             return -1;
         }
-        if (actual.getPos() >= actual.getLength()){
-            if (actual.getNextCluster() != null){
-                actual.resetPos();
-                actual = actual.getNextCluster();
-            } else {
-                actual = null;
+        if (actual.size() <= pos){
+            if (actual.getNextCluster() == null){
                 return -1;
             }
+            setCluster(actual.getNextCluster());
         }
-        stream.read();
-        return 0;
+        int val = data[pos];
+        pos++;
+        return val;
     }
 
-    private int readBytes(byte b[], int off, int len) throws IOException {
-        return 0;
+    private void setCluster(Cluster cluster) throws IOException{
+        pos = 0;
+        actual = cluster;
+        actual.read();
+        data = actual.getData();
     }
 
+    @Override
     public int read(byte b[]) throws IOException{
-	return readBytes(b, 0, b.length);
+        int i = 0;
+        for (; i < b.length; i++) {
+            int val = read();
+            if (val == -1){
+                break;
+            }
+            b[i] = (byte)(val);
+        }
+        return i;
     }
 
+    @Override
     public int read(byte b[], int off, int len) throws IOException {
-	return readBytes(b, off, len);
+        return -1;
     }
 
-    public native long skip(long n) throws IOException;
+    @Override
+    public long skip(long n) throws IOException{
+        //TODO implement...
+        return pos;
+    }
     
-    public int avaliable() throws IOException{
-        return stream.available();
+    public boolean avaliable() throws IOException{
+        return actual != null;
     }
 
+    @Override
     public void close() throws IOException {
-        stream.close();
+        data = null;
+        actual = null;
     }
 
+    @Override
     protected void finalize() throws IOException {
 	close();
     }

@@ -79,7 +79,7 @@ public class SecHelper {
      * @return rounds:salt:password hash
      */
     public static String createPasswordHash(String password) {
-        byte[] salt = createSalt(Constants.PASSWD_LENGTH - password.length());
+        byte[] salt = createSalt(Constants.SALT_LENGTH);
         return Constants.PASSWD_ROUNDS + ":" + bytesToString(salt) + ":" + createPasswordHash(password, salt, Constants.PASSWD_ROUNDS);
     }
 

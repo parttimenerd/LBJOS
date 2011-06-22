@@ -24,6 +24,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -36,6 +37,7 @@ import java.util.logging.Logger;
  */
 public class FileSystem {
 
+    private static java.io.RandomAccessFile source;
     private static java.io.File file;
     private static Directory root;
     private static File boot;
@@ -49,6 +51,7 @@ public class FileSystem {
 
     public static void config(java.io.File file) throws FileNotFoundException, IOException {
         FileSystem.file = file;
+        source = new RandomAccessFile(file, "rw");
         root = new Directory(FileSystem.ROOT_DIR_NAME, null, FileSystem.SYSTEM_OWNER);
         boot = new File(BOOT_FILE_NAME, null, SYSTEM_OWNER);
         loadFiles();
@@ -241,25 +244,16 @@ public class FileSystem {
         return root.addFile(file);
     }
 
-    public static void clear() {
-        root.clear();
-    }
-
     /**
-     * @return the file
+     * @return the source
      */
-    public static java.io.File getFile() {
-        return file;
+    public static java.io.RandomAccessFile getSource() {
+        return source;
     }
 
-    public static void addCluster(Cluster cluster){
-        clusters.add(cluster);
-    }
-
-    public static FileInputStream getInputStream() throws FileNotFoundException {
-        FileInputStream stream = new FileInputStream(file);
-        stream.mark(header_end_pos);
-        return stream;
+    public static Cluster getCluster(int length) {
+        //TODO implement
+        throw new UnsupportedOperationException("Not yet implemented");
     }
 
     private static class Store {

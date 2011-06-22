@@ -26,8 +26,9 @@ import java.util.ArrayList;
  */
 public class File extends MainFile {
     
-    private byte[] data;
+    //private byte[] data;
     private ArrayList<Cluster> clusters = new ArrayList<Cluster>();
+    private Cluster last;
     
     public File(String name, Directory parent, String owner){
         super(name, parent, owner);
@@ -35,31 +36,16 @@ public class File extends MainFile {
 
     @Override
     public boolean isEmpty(){
-        return data == null || data.length == 0;
+        return clusters.size() < 0;
     }
     
     @Override
     public int size(){
-        return data.length;
-    }
-    
-    /**
-     * @return the data
-     */
-    public byte[] getData() {
-        return data;
-    }
-
-    /**
-     * @param data the data to set
-     */
-    public void setData(byte[] data) {
-        this.data = data;
-        setLastModifiedTime();
-    }
-    
-    public void clear(){
-        data = null;
+        int length = 0;
+        for (int i = 0; i < clusters.size(); i++) {
+            length += clusters.get(i).size();
+        }
+        return length;
     }
 
     @Override
@@ -69,34 +55,29 @@ public class File extends MainFile {
 
     @Override
     public MainFile getFile(String filename) {
-        if (filename == parent.getPath() + "/" + name){
+        if (filename == null ? parent.getPath() + "/" + name == null : filename.equals(parent.getPath() + "/" + name)){
             return this;
         }
         return null;
     }
     
-    public ByteArrayInputStream getInputStream(){
-        return new ByteArrayInputStream(data);
+    public void delete(){
+        //...
     }
     
-    public OutputStream getOutputputStream(){
-        return new OutputStream();
-    }
-
-    public ArrayList<Cluster> getClusters() {
-        return clusters;
-    }
-
-    /**
-     * @param clusters the clusters to set
-     */
-    public void setClusters(ArrayList<Cluster> clusters) {
-        this.clusters = clusters;
-    }
-    
-    public class OutputStream extends java.io.ByteArrayOutputStream {
-        public OutputStream(){
-            buf = data;
+    public void addCluster(Cluster cluster){
+        if (cluster == null){
+            return;
         }
+        if (last == null){
+            last = cluster;
+        } else {
+            last.setNextCluster(cluster);
+        }
+    }
+    
+    @Override
+    public ArrayList<Cluster> getClusters(){
+        return clusters;
     }
 }

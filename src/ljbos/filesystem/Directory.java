@@ -50,17 +50,12 @@ public class Directory extends MainFile {
         return size;
     }
     
+    @Override
     public ArrayList<MainFile> getFileList() {
         return filelist;
     }
 
-    /**
-     * @param filelist the filelist to set
-     */
-    public void setFilelist(ArrayList<MainFile> filelist) {
-        this.filelist = filelist;
-    }
-
+    @Override
     public boolean addFile(MainFile file){
         if (file.getParent() == this){
             for (MainFile mainFile : filelist) {
@@ -97,7 +92,7 @@ public class Directory extends MainFile {
     }
     
     @Override
-    public void clear(){
+    public void delete(){
         filelist.clear();
     }
 

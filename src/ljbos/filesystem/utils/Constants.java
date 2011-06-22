@@ -26,7 +26,10 @@ package ljbos.filesystem.utils;
  */
 public final class Constants {
     public static final int CLUSTER_BLOCK_SIZE = 2024; //in byte
-    public static final int PASSWD_LENGTH = 64; //to store
+    public static final int SALT_LENGTH = 64; //to store
     public static final int PASSWD_ROUNDS = 32000;
     public static final int AES_MODE = 128;
+    //Begin and end value of the cluster description in the data file
+    public static final byte BEGIN_VAL = (byte)254;
+    public static final byte END_VAL = (byte)255;
 }
